@@ -23,7 +23,11 @@ const studyPlan = [
 ];
 
 export default function StudyTracker() {
-  const [checked, setChecked] = useState(Array(studyPlan.length).fill(false));
+  const [checked, setChecked] = useState(() => {
+    const saved = localStorage.getItem("study-tracker-progress");
+    return saved ? JSON.parse(saved) : Array(studyPlan.length).fill(false);
+  });
+
   const completedCount = checked.filter(Boolean).length;
   const progress = Math.round((completedCount / studyPlan.length) * 100);
 
@@ -32,6 +36,10 @@ export default function StudyTracker() {
     newChecked[index] = !newChecked[index];
     setChecked(newChecked);
   };
+
+  useEffect(() => {
+    localStorage.setItem("study-tracker-progress", JSON.stringify(checked));
+  }, [checked]);
 
   return (
     <div className="p-4 max-w-5xl mx-auto bg-gray-900 min-h-screen text-white">
